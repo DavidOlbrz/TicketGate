@@ -1,0 +1,3 @@
+# If set to true, players can go through
+# the gate without a ticket while sneaking.
+allow-illegal-bypass: true

@@ -1,0 +1,11 @@
+name: TicketGate
+version: '${project.version}'
+main: com.theagent.ticketgate.TicketGate
+api-version: 1.18
+prefix: TicketGate
+authors: [ _The_Agent_ ]
+description: Turns your fence gates into ticket gates
+commands:
+  ticketgate:
+    description: Configure the plugin
+    permission: ticketgate.use
