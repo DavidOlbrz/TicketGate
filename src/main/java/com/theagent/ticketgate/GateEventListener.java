@@ -10,6 +10,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Objects;
+
 public class GateEventListener implements Listener {
 
     private TicketGate main; // so the config file can be used here
@@ -18,14 +20,13 @@ public class GateEventListener implements Listener {
         this.main = main;
     }
 
-
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer(); // save the player
 
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             // if it is a right click on a block:
-            if (e.getClickedBlock().getType().equals(Material.ACACIA_FENCE_GATE)) {
+            if (Objects.requireNonNull(e.getClickedBlock()).getType().equals(Material.ACACIA_FENCE_GATE)) {
                 // if it is the correct gate type:
                 if (p.isSneaking() && main.getConfig().getBoolean("allow-illegal-bypass")) {
                     // if the player is sneaking
