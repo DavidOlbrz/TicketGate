@@ -23,6 +23,8 @@ public class TicketGateCommand implements CommandExecutor {
             } else {
                 p.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Your command seems to be wrong :/ | Try /ticketgate help");
             }
+        } else {
+            sender.sendMessage("[TicketGate] Commands can only be used by a player!");
         }
         return false;
     }
