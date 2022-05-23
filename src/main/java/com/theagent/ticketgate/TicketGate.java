@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public final class TicketGate extends JavaPlugin {
 
@@ -38,7 +39,7 @@ public final class TicketGate extends JavaPlugin {
         // start message
         System.out.println("Enabling TicketGate"); // TODO use bukkit's logger instead
         // register commands
-        getCommand("ticketgate").setExecutor(new TicketGateCommand());
+        Objects.requireNonNull(getCommand("ticketgate")).setExecutor(new TicketGateCommand());
         // register events
         getServer().getPluginManager().registerEvents(new GateEventListener(this), this);
     }
@@ -67,7 +68,6 @@ public final class TicketGate extends JavaPlugin {
             gatesConfig.load(gatesFile);
         } catch (IOException | InvalidConfigurationException e) {
             System.out.println("Error: The config is not working as it should!"); // TODO use bukkit's logger instead
-            return;
         }
     }
 
