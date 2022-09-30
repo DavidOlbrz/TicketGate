@@ -1,6 +1,5 @@
 package com.theagent.ticketgate;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -35,7 +34,7 @@ public class TicketGateCommand implements CommandExecutor {
             switch (args.length) {
                 case 0:
                     // TODO add message for help or information on the plugin
-                    player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Information page coming soon!");
+                    PlayerMessenger.sendMessage(player, "Information page coming soon!");
                     break;
                 case 2:
                     if (args[0].equals("setGate")) {
@@ -48,15 +47,17 @@ public class TicketGateCommand implements CommandExecutor {
                     break;
                 case 3:
                     if (args[0].equals("add")) {
-                        if (addGate(args)) {
-                            player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Gate added!");
-                        } else {
-                            player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Gate could not be added!");
-                        }
+                        addGate(player, args[1], args[2]);
+                    } else if (args[0].equals("editBlock")) {
+                        editBlock(player, args[1], args[2]);
+                    } else if (args[0].equals("editName")) {
+                        editName(player, args[1], args[2]);
+                    } else if (args[0].equals("editLore")) {
+                        editLore(player, args[1], args[2]);
                     }
                     break;
                 default:
-                    player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Your command seems to be wrong :/ | Try /ticketgate help");
+                    PlayerMessenger.sendError(player, "Your command seems to be wrong :/ | Try /ticketgate help");
                     break;
             }
         } else {
@@ -65,15 +66,15 @@ public class TicketGateCommand implements CommandExecutor {
         return false;
     }
 
-    private boolean addGate(String[] args) {
-        if (!config.contains("gates." + args[1])) {
-            config.set("gates." + args[1] + ".gate", "ACACIA_FENCE_GATE");
-            config.set("gates." + args[1] + ".block", args[2]);
-            config.set("gates." + args[1] + ".id", generateID());
+    private void addGate(Player player, String name, String block) {
+        if (!config.contains("gates." + name)) {
+            config.set("gates." + name + ".gate", "ACACIA_FENCE_GATE");
+            config.set("gates." + name + ".block", block);
+            config.set("gates." + name + ".id", generateID());
             main.saveConfig();
-            return true;
+            PlayerMessenger.sendMessage(player, "Gate added!");
         } else {
-            return false;
+            PlayerMessenger.sendError(player, "Gate already exists!");
         }
     }
 
@@ -82,12 +83,12 @@ public class TicketGateCommand implements CommandExecutor {
             if (!name.equals("default")) {
                 config.set("gates." + name, null);
                 main.saveConfig();
-                player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Gate removed!");
+                PlayerMessenger.sendMessage(player, "Gate removed!");
             } else {
-                player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + " ] You can't remove the default gate!");
+                PlayerMessenger.sendError(player, "You can't remove the default gate!");
             }
         } else {
-            player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Gate could not be removed!");
+            PlayerMessenger.sendError(player, "Gate could not be removed!");
         }
     }
 
@@ -106,12 +107,12 @@ public class TicketGateCommand implements CommandExecutor {
                 ticket.setItemMeta(ticketMeta); // add updated meta back to the item
                 player.getInventory().addItem(ticket); // give the player the ticket
 
-                player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Ticket given!");
+                PlayerMessenger.sendMessage(player, "Ticket given!");
             } else {
-                player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] You don't need a ticket for the default gate!");
+                PlayerMessenger.sendError(player, "You don't need a ticket for the default gate!");
             }
         } else {
-            player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Ticket could not be given!");
+            PlayerMessenger.sendError(player, "Ticket could not be given!");
         }
     }
 
@@ -121,16 +122,55 @@ public class TicketGateCommand implements CommandExecutor {
         return Integer.toString(id);
     }
 
+    private List<String> getGateBlocks() {
+        List<String> blocks = new ArrayList<>();
+        for (String gate : config.getConfigurationSection("gates").getKeys(false)) {
+            blocks.add(config.getString("gates." + gate + ".block"));
+        }
+        return blocks;
+    }
+
     private void setGate(Player player, String name) {
         Block gate = player.getTargetBlockExact(3);
         if (gate != null && gate.getType().name().equals(config.get("gates." + name + ".gate"))) {
             Block floor = player.getTargetBlockExact(3).getLocation().subtract(0, 1, 0).getBlock();
             Material newFloor = Material.getMaterial(config.getString("gates." + name + ".block"));
             floor.setType(newFloor);
-            player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Gate updated successfully!");
+            PlayerMessenger.sendMessage(player, "Gate updated successfully!");
         } else {
-            player.sendMessage("[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] Gate not found!");
+            PlayerMessenger.sendError(player, "Gate not found!");
         }
+    }
+
+    private void editBlock(Player player, String name, String block) {
+        // stops the method if the block is not a valid block
+        if (Material.getMaterial(block) == null) {
+            PlayerMessenger.sendError(player, "Block not found!");
+            return;
+        }
+
+        List<String> blocks = getGateBlocks(); // get all the blocks that are currently used for gates
+
+        // only change the block if the block is not already used for another gate
+        if (!blocks.contains(block)) {
+            config.set("gates." + name + ".block", block);
+            main.saveConfig();
+            PlayerMessenger.sendMessage(player, "Block updated successfully!");
+        } else {
+            PlayerMessenger.sendError(player, "Block already used for another gate!");
+        }
+    }
+
+    private void editName(Player player, String name, String newName) {
+        config.set("gates." + name + ".name", newName);
+        main.saveConfig();
+        PlayerMessenger.sendMessage(player, "Name updated successfully!");
+    }
+
+    private void editLore(Player player, String name, String newLore) {
+        config.set("gates." + name + ".lore", newLore);
+        main.saveConfig();
+        PlayerMessenger.sendMessage(player, "Lore updated successfully!");
     }
 
 }
