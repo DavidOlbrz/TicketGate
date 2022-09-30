@@ -1,3 +1,32 @@
 # If set to true, players can go through
 # the gate without a ticket while sneaking.
 allow-illegal-bypass: true
+
+gates:
+  default:
+    gate: ACACIA_FENCE_GATE
+    block: COBBLESTONE
+  subway:
+    gate: ACACIA_FENCE_GATE
+    block: POLISHED_ANDESITE
+    id: '359235'
+    name: 'Subway Ticket'
+    lore: 'Ticket'
+  lgnl:
+    gate: ACACIA_FENCE_GATE
+    block: idk
+    id: '849461'
+    name: 'Subway Ticket'
+    lore: 'Ticket'
+  google:
+    gate: ACACIA_FENCE_GATE
+    block: idk
+    id: '521865'
+    name: 'Subway Ticket'
+    lore: 'Ticket'
+  agent-corp:
+    gate: ACACIA_FENCE_GATE
+    block: idk
+    id: '857630'
+    name: 'Subway Ticket'
+    lore: 'Ticket'
