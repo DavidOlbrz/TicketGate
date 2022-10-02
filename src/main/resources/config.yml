@@ -15,21 +15,3 @@ gates:
     id: '359235'
     name: 'Subway Ticket'
     lore: 'Ticket'
-  lgnl:
-    gate: ACACIA_FENCE_GATE
-    block: IRON_BLOCK
-    id: '849461'
-    name: 'Subway Ticket'
-    lore: 'Ticket'
-  google:
-    gate: ACACIA_FENCE_GATE
-    block: BONE_BLOCK
-    id: '521865'
-    name: 'Subway Ticket'
-    lore: 'Ticket'
-  agent-corp:
-    gate: ACACIA_FENCE_GATE
-    block: GOLD_BLOCK
-    id: '857630'
-    name: 'Subway Ticket'
-    lore: 'Ticket'
