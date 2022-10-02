@@ -90,6 +90,12 @@ public class GateEventListener implements Listener {
     private boolean checkTicket(Player player, ItemStack item, Block block) {
         String key = itemLore(item); // get the key of the ticket
 
+        // check if the gate configuration fits the gate
+        if (key == null) {
+            PlayerMessenger.sendError(player, "Something went wrong...");
+            return false;
+        }
+
         // check if the master key is used
         if (key.equals(config.getString("master-key"))) {
             PlayerMessenger.sendMessage(player, "§5Master key valid! Opening gate...");
@@ -103,11 +109,6 @@ public class GateEventListener implements Listener {
             return true;
         }
 
-        // check if the gate configuration fits the gate
-        if (key == null) {
-            PlayerMessenger.sendError(player, "Something went wrong...");
-            return false;
-        }
         return key.equals(config.getString("gates." + gate + ".id"));
     }
 
