@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -21,13 +22,13 @@ public class TicketGateTabCompleter implements TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         switch (args.length) {
             case 1:
                 return StringUtil.copyPartialMatches(args[0], Arrays.asList("add", "remove", "setGate", "ticket", "editBlock", "editName", "editLore"), new ArrayList<>());
             case 2:
                 if (args[0].equals("remove") || args[0].equals("setGate") || args[0].equals("ticket") || args[0].equals("editBlock") || args[0].equals("editName") || args[0].equals("editLore")) {
-                    Set<String> gates = config.getConfigurationSection("gates").getKeys(false);
+                    Set<String> gates = Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false);
                     return StringUtil.copyPartialMatches(args[1], gates, new ArrayList<>());
                 } else return new ArrayList<>();
             case 3:
@@ -44,7 +45,7 @@ public class TicketGateTabCompleter implements TabCompleter {
      * @return a list of all materials
      */
     private List<String> getMaterials() {
-        List<String> materials = new ArrayList();
+        List<String> materials = new ArrayList<>();
         for (Material material : Material.values()) {
             materials.add(material.name());
         }

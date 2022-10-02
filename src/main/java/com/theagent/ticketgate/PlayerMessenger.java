@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
  */
 public class PlayerMessenger {
 
-    static String prefix = "[§6TicketGate§r] "; // default prefix
+    static final String prefix = "[§6TicketGate§r] "; // default prefix
 
     /**
      * Sends a message to the player

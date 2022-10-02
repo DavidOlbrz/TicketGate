@@ -9,15 +9,17 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class TicketGateCommand implements CommandExecutor {
 
-    private TicketGate main;
-    private FileConfiguration config;
+    private final TicketGate main;
+    private final FileConfiguration config;
 
     public TicketGateCommand(TicketGate main) {
         this.main = main;
@@ -25,7 +27,7 @@ public class TicketGateCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         // check if the sender is a player and has permission
         if (sender instanceof Player && sender.hasPermission("ticketgate.use")) {
             // cast sender to player
@@ -37,23 +39,32 @@ public class TicketGateCommand implements CommandExecutor {
                     PlayerMessenger.sendMessage(player, "Information page coming soon!");
                     break;
                 case 2:
-                    if (args[0].equals("setGate")) {
-                        setGate(player, args[1]);
-                    } else if (args[0].equals("remove")) {
-                        removeGate(player, args[1]);
-                    } else if (args[0].equals("ticket")) {
-                        giveTicket(player, args[1]);
+                    switch (args[0]) {
+                        case "setGate":
+                            setGate(player, args[1]);
+                            break;
+                        case "remove":
+                            removeGate(player, args[1]);
+                            break;
+                        case "ticket":
+                            giveTicket(player, args[1]);
+                            break;
                     }
                     break;
                 case 3:
-                    if (args[0].equals("add")) {
-                        addGate(player, args[1], args[2]);
-                    } else if (args[0].equals("editBlock")) {
-                        editBlock(player, args[1], args[2]);
-                    } else if (args[0].equals("editName")) {
-                        editName(player, args[1], args[2]);
-                    } else if (args[0].equals("editLore")) {
-                        editLore(player, args[1], args[2]);
+                    switch (args[0]) {
+                        case "add":
+                            addGate(player, args[1], args[2]);
+                            break;
+                        case "editBlock":
+                            editBlock(player, args[1], args[2]);
+                            break;
+                        case "editName":
+                            editName(player, args[1], args[2]);
+                            break;
+                        case "editLore":
+                            editLore(player, args[1], args[2]);
+                            break;
                     }
                     break;
                 default:
@@ -101,6 +112,10 @@ public class TicketGateCommand implements CommandExecutor {
 
                 ItemStack ticket = new ItemStack(Material.PAPER); // create a new item (paper)
                 ItemMeta ticketMeta = ticket.getItemMeta(); // get the item's meta
+                if (ticketMeta == null) {
+                    PlayerMessenger.sendError(player, "Something went wrong...");
+                    return;
+                }
                 ticketMeta.setDisplayName(config.getString("gates." + name + ".name")); // set the item's name
                 ticketMeta.setLore(lore); // set the item's lore
 
@@ -124,7 +139,7 @@ public class TicketGateCommand implements CommandExecutor {
 
     private List<String> getGateBlocks() {
         List<String> blocks = new ArrayList<>();
-        for (String gate : config.getConfigurationSection("gates").getKeys(false)) {
+        for (String gate : Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false)) {
             blocks.add(config.getString("gates." + gate + ".block"));
         }
         return blocks;
@@ -133,8 +148,12 @@ public class TicketGateCommand implements CommandExecutor {
     private void setGate(Player player, String name) {
         Block gate = player.getTargetBlockExact(3);
         if (gate != null && gate.getType().name().equals(config.get("gates." + name + ".gate"))) {
-            Block floor = player.getTargetBlockExact(3).getLocation().subtract(0, 1, 0).getBlock();
-            Material newFloor = Material.getMaterial(config.getString("gates." + name + ".block"));
+            Block floor = Objects.requireNonNull(player.getTargetBlockExact(3)).getLocation().subtract(0, 1, 0).getBlock();
+            Material newFloor = Material.getMaterial(Objects.requireNonNull(config.getString("gates." + name + ".block")));
+            if (newFloor == null) {
+                PlayerMessenger.sendError(player, "Something went wrong...");
+                return;
+            }
             floor.setType(newFloor);
             PlayerMessenger.sendMessage(player, "Gate updated successfully!");
         } else {
