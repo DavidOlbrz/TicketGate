@@ -2,6 +2,9 @@
 # the gate without a ticket while sneaking.
 allow-illegal-bypass: true
 
+# Universal key that opens every gate
+master-key: 123456
+
 gates:
   default:
     gate: ACACIA_FENCE_GATE

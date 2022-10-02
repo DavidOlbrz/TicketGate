@@ -38,6 +38,15 @@ public class TicketGateCommand implements CommandExecutor {
                     // TODO add message for help or information on the plugin
                     PlayerMessenger.sendMessage(player, "Information page coming soon!");
                     break;
+                case 1:
+                    switch (args[0]) {
+                        case "getMaster":
+                            giveMaster(player);
+                            break;
+                        case "regenMaster":
+                            regenMaster(player);
+                            break;
+                    }
                 case 2:
                     switch (args[0]) {
                         case "setGate":
@@ -129,6 +138,44 @@ public class TicketGateCommand implements CommandExecutor {
         } else {
             PlayerMessenger.sendError(player, "Ticket could not be given!");
         }
+    }
+
+    /**
+     * Gives the player the master key
+     * @param player the player to give the master key to
+     */
+    private void giveMaster(Player player) {
+        // create a new item (paper)
+        ItemStack masterTicket = new ItemStack(Material.PAPER);
+        ItemMeta masterTicketMeta = masterTicket.getItemMeta();
+
+        if (masterTicketMeta == null) {
+            PlayerMessenger.sendError(player, "Something went wrong...");
+            return;
+        }
+
+        // set the item's lore
+        List<String> lore = new ArrayList<>();
+        lore.add("Master Key:");
+        lore.add(config.getString("master-key"));
+
+        // add meta to the item
+        masterTicketMeta.setDisplayName("§5§nMaster Key");
+        masterTicketMeta.setLore(lore);
+        masterTicket.setItemMeta(masterTicketMeta);
+        player.getInventory().addItem(masterTicket);
+
+        PlayerMessenger.sendMessage(player, "§5Master key given!");
+    }
+
+    /**
+     * Regenerates the master key
+     * @param player the player who executed the command
+     */
+    private void regenMaster(Player player) {
+        config.set("master-key", generateID()); // generate a new key
+        main.saveConfig();
+        PlayerMessenger.sendMessage(player, "§5Master key regenerated!");
     }
 
     private String generateID() {

@@ -90,6 +90,12 @@ public class GateEventListener implements Listener {
     private boolean checkTicket(Player player, ItemStack item, Block block) {
         String key = itemLore(item); // get the key of the ticket
 
+        // check if the master key is used
+        if (key.equals(config.getString("master-key"))) {
+            PlayerMessenger.sendMessage(player, "§5Master key valid! Opening gate...");
+            return true;
+        }
+
         String gate = getGateType(block); // get the gate type
 
         // the default gate does not need a ticket
