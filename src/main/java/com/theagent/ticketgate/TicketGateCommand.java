@@ -91,6 +91,8 @@ public class TicketGateCommand implements CommandExecutor {
             config.set("gates." + name + ".gate", "ACACIA_FENCE_GATE");
             config.set("gates." + name + ".block", block);
             config.set("gates." + name + ".id", generateID());
+            config.set("gates." + name + ".name", name);
+            config.set("gates." + name + ".lore", "");
             main.saveConfig();
             PlayerMessenger.sendMessage(player, "Gate added!");
         } else {
