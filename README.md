@@ -23,3 +23,6 @@ N/A
 
 ### Edit the lore of the key for a gate configuration
 `ticketgate editLore <name> <lore>`
+
+### (De-)Activate One-Time-Use of a key / ticket (per gate)
+`ticketgate setOneTimeUse <name> <true|false>`
