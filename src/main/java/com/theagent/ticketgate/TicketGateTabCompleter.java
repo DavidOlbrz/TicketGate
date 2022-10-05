@@ -25,15 +25,17 @@ public class TicketGateTabCompleter implements TabCompleter {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         switch (args.length) {
             case 1:
-                return StringUtil.copyPartialMatches(args[0], Arrays.asList("add", "remove", "setGate", "ticket", "editBlock", "editName", "editLore"), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[0], Arrays.asList("add", "remove", "setGate", "ticket", "editBlock", "editName", "editLore", "setOneTimeUse"), new ArrayList<>());
             case 2:
-                if (args[0].equals("remove") || args[0].equals("setGate") || args[0].equals("ticket") || args[0].equals("editBlock") || args[0].equals("editName") || args[0].equals("editLore")) {
+                if (args[0].equals("remove") || args[0].equals("setGate") || args[0].equals("ticket") || args[0].equals("editBlock") || args[0].equals("editName") || args[0].equals("editLore") || args[0].equals("setOneTimeUse")) {
                     Set<String> gates = Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false);
                     return StringUtil.copyPartialMatches(args[1], gates, new ArrayList<>());
                 } else return new ArrayList<>();
             case 3:
                 if (args[0].equals("add") || args[0].equals("editBlock")) {
                     return StringUtil.copyPartialMatches(args[2], getMaterials(), new ArrayList<>());
+                } else if (args[0].equals("setOneTimeUse")) {
+                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("true", "false"), new ArrayList<>());
                 } else return new ArrayList<>();
             default:
                 return new ArrayList<>();

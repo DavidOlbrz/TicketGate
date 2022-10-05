@@ -74,6 +74,9 @@ public class TicketGateCommand implements CommandExecutor {
                         case "editLore":
                             editLore(player, args[1], args[2]);
                             break;
+                        case "setOneTimeUse":
+                            setOneTimeUse(player, args[1], Boolean.parseBoolean(args[2]));
+                            break;
                     }
                     break;
                 default:
@@ -93,6 +96,7 @@ public class TicketGateCommand implements CommandExecutor {
             config.set("gates." + name + ".id", generateID());
             config.set("gates." + name + ".name", name);
             config.set("gates." + name + ".lore", "");
+            config.set("gates." + name + ".one-item-use", false);
             main.saveConfig();
             PlayerMessenger.sendMessage(player, "Gate added!");
         } else {
@@ -186,6 +190,12 @@ public class TicketGateCommand implements CommandExecutor {
         return Integer.toString(id);
     }
 
+    private List<String> getGates() {
+        List<String> gates = new ArrayList<>();
+        gates.addAll(Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false));
+        return gates;
+    }
+
     private List<String> getGateBlocks() {
         List<String> blocks = new ArrayList<>();
         for (String gate : Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false)) {
@@ -239,6 +249,21 @@ public class TicketGateCommand implements CommandExecutor {
         config.set("gates." + name + ".lore", newLore);
         main.saveConfig();
         PlayerMessenger.sendMessage(player, "Lore updated successfully!");
+    }
+
+    private void setOneTimeUse(Player player, String name, boolean consume) {
+        if (name.equals("default")) {
+            PlayerMessenger.sendError(player, "You can't change the default gate!");
+            return;
+        }
+        if (getGates().contains(name)) {
+            config.set("gates." + name + ".one-time-use", consume);
+            main.saveConfig();
+            PlayerMessenger.sendMessage(player, (consume ? "Ticket will now be consumed after usage!" : "Ticket will no longer be consumed!"));
+        } else {
+            PlayerMessenger.sendError(player, "Gate not found!");
+        }
+
     }
 
 }

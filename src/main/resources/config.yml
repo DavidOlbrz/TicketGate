@@ -13,5 +13,6 @@ gates:
     gate: ACACIA_FENCE_GATE
     block: POLISHED_ANDESITE
     id: '359235'
-    name: 'Subway Ticket'
-    lore: 'Ticket'
+    name: Subway Ticket
+    lore: Ticket
+    one-time-use: true
