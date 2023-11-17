@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bdad042a-3dfe-4eaf-b565-961b5c0c834f" name="Changes" comment="" />
+    <list default="true" id="bdad042a-3dfe-4eaf-b565-961b5c0c834f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/theagent/ticketgate/TicketGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/theagent/ticketgate/TicketGate.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +15,9 @@
   </component>
   <component name="FormatOnSaveOptions">
     <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -29,6 +35,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/david/IdeaProjects/TicketGate/spigot-api-1.20.1-R0.1-20230826.083319-58-shaded.jar",
     "node.js.detected.package.eslint": "true",
@@ -102,7 +109,9 @@
       <workItem from="1693848913758" duration="3165000" />
       <workItem from="1698435974217" duration="56000" />
       <workItem from="1698436075718" duration="1416000" />
-      <workItem from="1698606262542" duration="1597000" />
+      <workItem from="1698606262542" duration="2399000" />
+      <workItem from="1698855853594" duration="47000" />
+      <workItem from="1700254084006" duration="912000" />
     </task>
     <servers />
   </component>
