@@ -12,7 +12,7 @@ public final class TicketGate extends JavaPlugin {
     @Override
     public void onEnable() {
         // start message
-        System.out.println("Enabling TicketGate"); // TODO use bukkit's logger instead
+        getLogger().info("Enabling TicketGate");
         // save default config
         saveDefaultConfig();
         // register commands
@@ -28,7 +28,7 @@ public final class TicketGate extends JavaPlugin {
     @Override
     public void onDisable() {
         // stop message
-        System.out.println("Disabling TicketGate"); // TODO use bukkit's logger instead
+        getLogger().info("Disabling TicketGate");
     }
 
 }
