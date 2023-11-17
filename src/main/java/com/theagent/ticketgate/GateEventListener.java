@@ -3,6 +3,7 @@ package com.theagent.ticketgate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Gate;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,8 +35,12 @@ public class GateEventListener implements Listener {
             Block clickedBlock = e.getClickedBlock();
             ItemStack item = p.getInventory().getItemInMainHand();
             String itemKey = itemLore(item);
+            // if no block was clicked
             if (clickedBlock == null) return;
             if (clickedBlock.getType().equals(Material.ACACIA_FENCE_GATE)) {
+                Gate gate = (Gate) clickedBlock.getBlockData();
+                // if gate is already open
+                if (gate.isOpen()) return;
                 // if it is the correct gate type:
                 if (p.isSneaking() && main.getConfig().getBoolean("allow-illegal-bypass")) {
                     // if the player is sneaking
