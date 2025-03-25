@@ -2,6 +2,14 @@
 # the gate without a ticket while sneaking.
 allow-illegal-bypass: true
 
+# Set custom sounds
+# Opened illegaly
+illegal-sound: "minecraft:item.trident.thunder"
+# Opened with the correct ticket
+success-sound: "minecraft:entity.experience_orb.pickup"
+# Invalid or no ticket
+invalid-sound: "minecraft:block.redstone_torch.burnout"
+
 # Universal key that opens every gate
 master-key: 123456
 

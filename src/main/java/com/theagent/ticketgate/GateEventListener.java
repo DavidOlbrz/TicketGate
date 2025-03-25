@@ -21,9 +21,18 @@ public class GateEventListener implements Listener {
     private final TicketGate main; // so the config file can be used here
     private final FileConfiguration config; // so the config file can be used here
 
+    // sounds
+    private final String illegalSound;
+    private final String successSound;
+    private final String invalidSound;
+
     public GateEventListener(TicketGate main) {
         this.main = main;
         config = main.getConfig();
+
+        illegalSound = config.getString("illegal-sound");
+        successSound = config.getString("success-sound");
+        invalidSound = config.getString("invalid-sound");
     }
 
     @EventHandler
@@ -45,9 +54,7 @@ public class GateEventListener implements Listener {
                 if (p.isSneaking() && main.getConfig().getBoolean("allow-illegal-bypass")) {
                     // if the player is sneaking
                     illegalMessage(p, clickedBlock);
-                    Objects.requireNonNull(
-                            Bukkit.getWorld(p.getWorld().getUID())
-                    ).playSound(p.getLocation(), "dclworld:gate.alarm", 1.0f, 1.0f);
+                    playSound(p, illegalSound);
                     /*
                      * Temporary solution: Just open the gate
                      * Correct way would be the player teleporting behind the gate.
@@ -55,21 +62,15 @@ public class GateEventListener implements Listener {
                 } else {
                     if (item.getType().equals(Material.PAPER) && itemKey != null && checkTicket(p, item, clickedBlock)) {
                         // if the player has a correct ticket in their hand
-                        Objects.requireNonNull(
-                                Bukkit.getWorld(p.getWorld().getUID())
-                        ).playSound(p.getLocation(), "dclworld:gate.success", 1.0f, 1.0f);
+                        playSound(p, successSound);
                     } else if (getGateType(clickedBlock).equals("default")) {
                         // allow opening the gate if it is a default gate
-                        Objects.requireNonNull(
-                                Bukkit.getWorld(p.getWorld().getUID())
-                        ).playSound(p.getLocation(), "dclworld:gate.success", 1.0f, 1.0f);
+                        playSound(p, successSound);
                     } else {
                         // if not cancel the event
                         e.setCancelled(true);
                         p.sendTitle("§4§lWrong ticket!", "§4You need a ticket to enter!", 10, 70, 20);
-                        Objects.requireNonNull(
-                                Bukkit.getWorld(p.getWorld().getUID())
-                        ).playSound(p.getLocation(), "dclworld:gate.error", 1.0f, 1.0f);
+                        playSound(p, invalidSound);
                     }
                 }
             }
@@ -153,6 +154,20 @@ public class GateEventListener implements Listener {
      */
     private void illegalMessage(Player player, Block block) {
         Bukkit.broadcastMessage("§5* " + player.getDisplayName() + " opened a ticket gate illegally at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + " *");
+    }
+
+    /**
+     * Play a sound as ticket gate feedback
+     *
+     * @param player Player who triggered the event
+     * @param sound  Sound to play
+     */
+    private void playSound(Player player, String sound) {
+        if (!sound.isEmpty()) {
+            Objects.requireNonNull(
+                    Bukkit.getWorld(player.getWorld().getUID())
+            ).playSound(player.getLocation(), sound, 1.0f, 1.0f);
+        }
     }
 
 }
