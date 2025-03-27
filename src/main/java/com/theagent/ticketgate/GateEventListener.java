@@ -160,7 +160,7 @@ public class GateEventListener implements Listener {
      * @param block  Block that was opened
      */
     private void illegalMessage(Player player, Block block) {
-        Bukkit.broadcastMessage("§5* " + player.getDisplayName() + " opened a ticket gate illegally at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + " *");
+        Bukkit.broadcastMessage("§5* " + PlainTextComponentSerializer.plainText().serialize(player.displayName()) + " opened a ticket gate illegally at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + " *");
     }
 
     /**
