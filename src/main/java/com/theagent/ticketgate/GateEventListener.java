@@ -1,5 +1,6 @@
 package com.theagent.ticketgate;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -160,7 +161,18 @@ public class GateEventListener implements Listener {
      * @param block  Block that was opened
      */
     private void illegalMessage(Player player, Block block) {
-        Bukkit.broadcastMessage("§5* " + PlainTextComponentSerializer.plainText().serialize(player.displayName()) + " opened a ticket gate illegally at " + block.getX() + ", " + block.getY() + ", " + block.getZ() + " *");
+        Audience players = Bukkit.getServer();
+        players.sendMessage(
+                Component.text(
+                        String.format("* %s opened a ticket gate illegally at %d, %d, %d *",
+                                PlainTextComponentSerializer.plainText().serialize(player.displayName()),
+                                block.getX(),
+                                block.getY(),
+                                block.getZ()
+                        ),
+                        NamedTextColor.DARK_PURPLE
+                )
+        );
     }
 
     /**
