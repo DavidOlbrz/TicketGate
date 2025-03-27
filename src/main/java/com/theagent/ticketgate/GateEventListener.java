@@ -1,5 +1,9 @@
 package com.theagent.ticketgate;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,7 +74,8 @@ public class GateEventListener implements Listener {
                     } else {
                         // if not cancel the event
                         e.setCancelled(true);
-                        p.sendTitle("§4§lWrong ticket!", "§4You need a ticket to enter!", 10, 70, 20);
+
+                        p.showTitle(buildWarningTitle());
                         playSound(p, invalidSound);
                     }
                 }
@@ -168,6 +174,24 @@ public class GateEventListener implements Listener {
                     Bukkit.getWorld(player.getWorld().getUID())
             ).playSound(player.getLocation(), sound, 1.0f, 1.0f);
         }
+    }
+
+    /**
+     * Creates a warning as a title that can be shown to a player
+     *
+     * @return Warning title
+     */
+    private Title buildWarningTitle() {
+        final Component mainWarning = Component.text("Wrong ticket!", NamedTextColor.DARK_RED, TextDecoration.BOLD);
+        final Component subWarning = Component.text("You need a ticket to enter!", NamedTextColor.DARK_RED);
+
+        final Title.Times duration = Title.Times.times(
+                Duration.ofMillis(500), // 0.5 seconds fade in
+                Duration.ofSeconds(3), // 3 seconds stay
+                Duration.ofMillis(500) // 0.5 seconds fade out
+        );
+
+        return Title.title(mainWarning, subWarning, duration);
     }
 
 }
