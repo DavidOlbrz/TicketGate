@@ -3,6 +3,7 @@ package com.theagent.ticketgate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -142,10 +143,10 @@ public class GateEventListener implements Listener {
             ItemMeta meta = item.getItemMeta();
             if (meta == null) return null;
             if (meta.hasLore()) {
-                List<String> lore = meta.getLore();
+                List<Component> lore = meta.lore();
                 if (lore == null) return null;
                 if (lore.size() >= 2) {
-                    return lore.get(1);
+                    return PlainTextComponentSerializer.plainText().serialize(lore.get(1));
                 } else return null;
             } else return null;
         } else return null;
