@@ -11,8 +11,6 @@ public final class TicketGate extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        // start message
-        getLogger().info("Enabling TicketGate");
         // save default config
         saveDefaultConfig();
         // register commands
@@ -20,6 +18,8 @@ public final class TicketGate extends JavaPlugin {
         Objects.requireNonNull(getCommand("ticketgate")).setTabCompleter(new TicketGateTabCompleter(this.getConfig()));
         // register events
         getServer().getPluginManager().registerEvents(new GateEventListener(this), this);
+        // start message
+        getLogger().info("TicketGate enabled");
     }
 
     /**
@@ -28,7 +28,7 @@ public final class TicketGate extends JavaPlugin {
     @Override
     public void onDisable() {
         // stop message
-        getLogger().info("Disabling TicketGate");
+        getLogger().info("TicketGate disabled");
     }
 
 }
