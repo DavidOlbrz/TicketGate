@@ -26,6 +26,11 @@ public class GateEventListener implements Listener {
     private final String successSound;
     private final String invalidSound;
 
+    /**
+     * Handles all interactions with ticket gates
+     *
+     * @param main Plugin class
+     */
     public GateEventListener(TicketGate main) {
         this.main = main;
         config = main.getConfig();
@@ -35,6 +40,11 @@ public class GateEventListener implements Listener {
         invalidSound = config.getString("invalid-sound");
     }
 
+    /**
+     * Catching the player's interaction with a ticket gate
+     *
+     * @param e PlayerInteractEvent
+     */
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer(); // save the player
@@ -42,15 +52,26 @@ public class GateEventListener implements Listener {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             // if it is a right click on a block:
             Block clickedBlock = e.getClickedBlock();
-            ItemStack item = p.getInventory().getItemInMainHand();
-            String itemKey = itemLore(item);
             // if no block was clicked
             if (clickedBlock == null) return;
+            // get item in player's hand
+            ItemStack item = p.getInventory().getItemInMainHand();
+            String itemKey = itemLore(item);
+
+            // if correct gate type
             if (clickedBlock.getType().equals(Material.ACACIA_FENCE_GATE)) {
                 Gate gate = (Gate) clickedBlock.getBlockData();
+
                 // if gate is already open
                 if (gate.isOpen()) return;
-                // if it is the correct gate type:
+
+                // allow opening the gate if it is a default gate
+                if (getGateType(clickedBlock).equals("default")) {
+                    playSound(p, successSound);
+                    return;
+                }
+
+                // player is sneaking -> illegal bypass
                 if (p.isSneaking() && main.getConfig().getBoolean("allow-illegal-bypass")) {
                     // if the player is sneaking
                     illegalMessage(p, clickedBlock);
@@ -59,28 +80,34 @@ public class GateEventListener implements Listener {
                      * Temporary solution: Just open the gate
                      * Correct way would be the player teleporting behind the gate.
                      */
-                } else {
-                    if (item.getType().equals(Material.PAPER) && itemKey != null && checkTicket(p, item, clickedBlock)) {
-                        // if the player has a correct ticket in their hand
-                        playSound(p, successSound);
-                    } else if (getGateType(clickedBlock).equals("default")) {
-                        // allow opening the gate if it is a default gate
-                        playSound(p, successSound);
-                    } else {
-                        // if not cancel the event
-                        e.setCancelled(true);
-                        // notify the player
-                        p.sendTitle("§4§lWrong ticket!", "§4You need a ticket to enter!", 10, 70, 20);
-                        playSound(p, invalidSound);
-                    }
+                    return;
                 }
+
+                // if the player has a correct ticket in their hand
+                if (item.getType().equals(Material.PAPER) && itemKey != null && checkTicket(p, item, clickedBlock)) {
+                    playSound(p, successSound);
+                    return;
+                }
+
+                // if nothing from above applies, cancel the event
+                e.setCancelled(true);
+                // notify the player
+                p.sendTitle("§4§lWrong ticket!", "§4You need a ticket to enter!", 10, 70, 20);
+                playSound(p, invalidSound);
             }
         }
     }
 
+    /**
+     * Returns the name of the specific block / gate
+     *
+     * @param block block
+     * @return block / gate name
+     */
     private String getGateType(Block block) {
         Material floor = block.getLocation().subtract(0, 1, 0).getBlock().getType(); // get block below gate
-        String[] gates = Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false).toArray(new String[0]); // get all possible gate configurations
+        String[] gates = Objects.requireNonNull(config.getConfigurationSection("gates"))
+                .getKeys(false).toArray(new String[0]); // get all possible gate configurations
         String gate = "default";
 
         // search if the block fits a gate configuration
@@ -94,6 +121,14 @@ public class GateEventListener implements Listener {
         return gate;
     }
 
+    /**
+     * Checks if the used ticket is valid for the specific gate
+     *
+     * @param player Player
+     * @param item   Ticket
+     * @param block  Gate
+     * @return correct ticket
+     */
     private boolean checkTicket(Player player, ItemStack item, Block block) {
         String key = itemLore(item); // get the key of the ticket
 
