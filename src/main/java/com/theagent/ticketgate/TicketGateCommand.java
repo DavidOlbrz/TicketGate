@@ -1,8 +1,5 @@
 package com.theagent.ticketgate;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -121,17 +118,17 @@ public class TicketGateCommand implements CommandExecutor {
     private void giveTicket(Player player, String name) {
         if (config.contains("gates." + name)) {
             if (!name.equals("default")) {
-                List<Component> lore = new ArrayList<>(); // the item's lore will be saved in this list
+                List<String> lore = new ArrayList<>(); // the item's lore will be saved in this list
 
                 String itemLore = config.getString("gates." + name + ".lore");
-                lore.add(Component.text((itemLore == null) ? "" : itemLore)); // add the lore to the list
+                lore.add((itemLore == null) ? "" : itemLore); // add the lore to the list
 
                 String ticketId = config.getString("gates." + name + ".id");
                 if (ticketId == null) {
                     PlayerMessenger.sendError(player, "Ticket ID missing in config!");
                     return;
                 }
-                lore.add(Component.text(ticketId)); // add the id to the list
+                lore.add(ticketId); // add the id to the list
 
                 ItemStack ticket = new ItemStack(Material.PAPER); // create a new item (paper)
                 ItemMeta ticketMeta = ticket.getItemMeta(); // get the item's meta
@@ -141,8 +138,8 @@ public class TicketGateCommand implements CommandExecutor {
                 }
                 String itemName = config.getString("gates." + name + ".name");
                 itemName = (itemName == null) ? "Ticket" : itemName;
-                ticketMeta.customName(Component.text(itemName)); // set the item's name
-                ticketMeta.lore(lore); // set the item's lore
+                ticketMeta.setItemName(itemName); // set the item's name
+                ticketMeta.setLore(lore); // set the item's lore
 
                 ticket.setItemMeta(ticketMeta); // add updated meta back to the item
                 player.getInventory().addItem(ticket); // give the player the ticket
@@ -172,23 +169,18 @@ public class TicketGateCommand implements CommandExecutor {
         }
 
         // set the item's lore
-        List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Master Key:"));
+        List<String> lore = new ArrayList<>();
+        lore.add("Master Key:");
         String masterKey = config.getString("master-key");
         if (masterKey == null) {
             PlayerMessenger.sendError(player, "Master Key not defined in config!");
             return;
         }
-        lore.add(Component.text(masterKey));
+        lore.add(masterKey);
 
         // add meta to the item
-        masterTicketMeta.customName(
-                Component
-                        .text("Master Key")
-                        .color(NamedTextColor.DARK_PURPLE)
-                        .decorate(TextDecoration.UNDERLINED)
-        );
-        masterTicketMeta.lore(lore);
+        masterTicketMeta.setItemName("§5§nMaster Key");
+        masterTicketMeta.setLore(lore);
         masterTicket.setItemMeta(masterTicketMeta);
         player.getInventory().addItem(masterTicket);
 
