@@ -4,6 +4,12 @@
 
 Turns your fence gates into ticket gates
 
+## Prerequisites
+
+- Java 17
+- SpigotMC / PaperMC Server
+- Minecraft Version 1.21.4
+
 ## Commands
 
 ### Add a new gate configuration
