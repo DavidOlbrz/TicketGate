@@ -1,5 +1,6 @@
 package com.theagent.ticketgate;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -7,7 +8,10 @@ import org.bukkit.entity.Player;
  */
 public class PlayerMessenger {
 
-    private static final String PREFIX = "[§6TicketGate§r] "; // default prefix
+    // default prefix
+    public static final String PREFIX = "[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] ";
+
+    private static final String COMMAND_ERROR = "Your command seems to be wrong :/ | Try /ticketgate help";
 
     /**
      * Sends a message to the player
@@ -26,7 +30,16 @@ public class PlayerMessenger {
      * @param message the error message to send
      */
     public static void sendError(Player player, String message) {
-        player.sendMessage(PREFIX + "§c" + message);
+        player.sendMessage(PREFIX + ChatColor.RED + message);
+    }
+
+    /**
+     * Sends an error message to the player
+     *
+     * @param player the player to send the message to
+     */
+    public static void sendCommandError(Player player) {
+        player.sendMessage(PREFIX + ChatColor.RED + COMMAND_ERROR);
     }
 
 }

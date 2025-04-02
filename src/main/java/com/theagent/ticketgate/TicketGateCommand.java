@@ -1,5 +1,6 @@
 package com.theagent.ticketgate;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -43,6 +44,9 @@ public class TicketGateCommand implements CommandExecutor {
                         case "regenMaster":
                             regenMaster(player);
                             break;
+                        default:
+                            PlayerMessenger.sendCommandError(player);
+                            break;
                     }
                 case 2:
                     switch (args[0]) {
@@ -54,6 +58,9 @@ public class TicketGateCommand implements CommandExecutor {
                             break;
                         case "ticket":
                             giveTicket(player, args[1]);
+                            break;
+                        default:
+                            PlayerMessenger.sendCommandError(player);
                             break;
                     }
                     break;
@@ -74,15 +81,19 @@ public class TicketGateCommand implements CommandExecutor {
                         case "setOneTimeUse":
                             setOneTimeUse(player, args[1], Boolean.parseBoolean(args[2]));
                             break;
+                        default:
+                            PlayerMessenger.sendCommandError(player);
+                            break;
                     }
                     break;
                 default:
-                    PlayerMessenger.sendError(player, "Your command seems to be wrong :/ | Try /ticketgate help");
+                    PlayerMessenger.sendCommandError(player);
                     break;
             }
         } else {
-            sender.sendMessage("[TicketGate] Commands can only be used by a player!");
+            sender.sendMessage(PlayerMessenger.PREFIX + ChatColor.RED + "Commands can only be used by a player!");
         }
+        
         return false;
     }
 
