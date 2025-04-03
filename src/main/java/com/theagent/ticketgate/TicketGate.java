@@ -11,13 +11,13 @@ public final class TicketGate extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        // save default config
-        saveDefaultConfig();
+        // config handling
+        ConfigManager configManager = new ConfigManager(this);
         // register commands
-        Objects.requireNonNull(getCommand("ticketgate")).setExecutor(new TicketGateCommand(this));
-        Objects.requireNonNull(getCommand("ticketgate")).setTabCompleter(new TicketGateTabCompleter(this.getConfig()));
+        Objects.requireNonNull(getCommand("ticketgate")).setExecutor(new TicketGateCommand(configManager));
+        Objects.requireNonNull(getCommand("ticketgate")).setTabCompleter(new TicketGateTabCompleter(configManager));
         // register events
-        getServer().getPluginManager().registerEvents(new GateEventListener(this), this);
+        getServer().getPluginManager().registerEvents(new GateEventListener(configManager), this);
         // start message
         getLogger().info("TicketGate enabled");
     }

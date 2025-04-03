@@ -6,10 +6,10 @@ import org.bukkit.entity.Player;
 /**
  * A class for sending (error) messages to players
  */
-public class PlayerMessenger {
+class PlayerMessenger {
 
     // default prefix
-    public static final String PREFIX = "[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] ";
+    static final String PREFIX = "[" + ChatColor.GOLD + "TicketGate" + ChatColor.RESET + "] ";
 
     private static final String COMMAND_ERROR = "Your command seems to be wrong :/ | Try /ticketgate help";
 
@@ -19,7 +19,7 @@ public class PlayerMessenger {
      * @param player  the player to send the message to
      * @param message the message to send
      */
-    public static void sendMessage(Player player, String message) {
+    static void sendMessage(Player player, String message) {
         player.sendMessage(PREFIX + message);
     }
 
@@ -29,7 +29,7 @@ public class PlayerMessenger {
      * @param player  the player to send the message to
      * @param message the error message to send
      */
-    public static void sendError(Player player, String message) {
+    static void sendError(Player player, String message) {
         player.sendMessage(PREFIX + ChatColor.RED + message);
     }
 
@@ -38,7 +38,7 @@ public class PlayerMessenger {
      *
      * @param player the player to send the message to
      */
-    public static void sendCommandError(Player player) {
+    static void sendCommandError(Player player) {
         player.sendMessage(PREFIX + ChatColor.RED + COMMAND_ERROR);
     }
 

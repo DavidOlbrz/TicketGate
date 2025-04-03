@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Gate;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,10 +15,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.Objects;
 
-public class GateEventListener implements Listener {
+class GateEventListener implements Listener {
 
-    private final TicketGate main; // so the config file can be used here
-    private final FileConfiguration config; // so the config file can be used here
+    private final ConfigManager config; // so the config file can be used here
 
     // sounds
     private final String illegalSound;
@@ -29,12 +27,11 @@ public class GateEventListener implements Listener {
     /**
      * Handles all interactions with ticket gates
      *
-     * @param main Plugin class
+     * @param configManager Plugin class
      */
-    public GateEventListener(TicketGate main) {
-        this.main = main;
-        config = main.getConfig();
-
+    GateEventListener(ConfigManager configManager) {
+        config = configManager;
+        // set sounds
         illegalSound = config.getString("illegal-sound");
         successSound = config.getString("success-sound");
         invalidSound = config.getString("invalid-sound");
@@ -72,7 +69,7 @@ public class GateEventListener implements Listener {
                 }
 
                 // player is sneaking -> illegal bypass
-                if (p.isSneaking() && main.getConfig().getBoolean("allow-illegal-bypass")) {
+                if (p.isSneaking() && config.getBoolean("allow-illegal-bypass")) {
                     // if the player is sneaking
                     illegalMessage(p, clickedBlock);
                     playSound(p, illegalSound);
@@ -106,8 +103,7 @@ public class GateEventListener implements Listener {
      */
     private String getGateType(Block block) {
         Material floor = block.getLocation().subtract(0, 1, 0).getBlock().getType(); // get block below gate
-        String[] gates = Objects.requireNonNull(config.getConfigurationSection("gates"))
-                .getKeys(false).toArray(new String[0]); // get all possible gate configurations
+        String[] gates = config.getGates(); // get all possible gate configurations
         String gate = "default";
 
         // search if the block fits a gate configuration

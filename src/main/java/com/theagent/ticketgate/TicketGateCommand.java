@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,18 +16,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class TicketGateCommand implements CommandExecutor {
+class TicketGateCommand implements CommandExecutor {
 
-    private final TicketGate main;
-    private final FileConfiguration config;
+    private final ConfigManager config;
 
-    public TicketGateCommand(TicketGate main) {
-        this.main = main;
-        config = main.getConfig();
+    TicketGateCommand(ConfigManager configManager) {
+        config = configManager;
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
+    public boolean onCommand(
+            @NotNull CommandSender sender,
+            @NotNull Command command,
+            @NotNull String label,
+            @NotNull String @NotNull [] args
+    ) {
         // check if the sender is a player and has permission
         if (sender instanceof Player player && sender.hasPermission("ticketgate.use")) {
             switch (args.length) {
@@ -45,6 +47,7 @@ public class TicketGateCommand implements CommandExecutor {
                             regenMaster(player);
                             break;
                         default:
+                            // error
                             PlayerMessenger.sendCommandError(player);
                             break;
                     }
@@ -60,6 +63,7 @@ public class TicketGateCommand implements CommandExecutor {
                             giveTicket(player, args[1]);
                             break;
                         default:
+                            // error
                             PlayerMessenger.sendCommandError(player);
                             break;
                     }
@@ -82,30 +86,33 @@ public class TicketGateCommand implements CommandExecutor {
                             setOneTimeUse(player, args[1], Boolean.parseBoolean(args[2]));
                             break;
                         default:
+                            // error
                             PlayerMessenger.sendCommandError(player);
                             break;
                     }
                     break;
                 default:
+                    // error
                     PlayerMessenger.sendCommandError(player);
                     break;
             }
         } else {
             sender.sendMessage(PlayerMessenger.PREFIX + ChatColor.RED + "Commands can only be used by a player!");
         }
-        
+
         return false;
     }
 
     private void addGate(Player player, String name, String block) {
-        if (!config.contains("gates." + name)) {
-            config.set("gates." + name + ".gate", "ACACIA_FENCE_GATE");
-            config.set("gates." + name + ".block", block);
-            config.set("gates." + name + ".id", generateID());
-            config.set("gates." + name + ".name", name);
-            config.set("gates." + name + ".lore", "");
-            config.set("gates." + name + ".one-item-use", false);
-            main.saveConfig();
+        if (!config.containsKey("gates." + name)) {
+            config.setProperties(
+                    new GateProperty(name, "gate", "ACACIA_FENCE_GATE"),
+                    new GateProperty(name, "block", block),
+                    new GateProperty(name, "id", generateID()),
+                    new GateProperty(name, "name", name),
+                    new GateProperty(name, "lore", ""),
+                    new GateProperty(name, "one-item-use", false)
+            );
             PlayerMessenger.sendMessage(player, "Gate added!");
         } else {
             PlayerMessenger.sendError(player, "Gate already exists!");
@@ -113,10 +120,9 @@ public class TicketGateCommand implements CommandExecutor {
     }
 
     private void removeGate(Player player, String name) {
-        if (config.contains("gates." + name)) {
+        if (config.containsKey("gates." + name)) {
             if (!name.equals("default")) {
-                config.set("gates." + name, null);
-                main.saveConfig();
+                config.deleteGateConfig(name);
                 PlayerMessenger.sendMessage(player, "Gate removed!");
             } else {
                 PlayerMessenger.sendError(player, "You can't remove the default gate!");
@@ -127,7 +133,7 @@ public class TicketGateCommand implements CommandExecutor {
     }
 
     private void giveTicket(Player player, String name) {
-        if (config.contains("gates." + name)) {
+        if (config.containsKey("gates." + name)) {
             if (!name.equals("default")) {
                 List<String> lore = new ArrayList<>(); // the item's lore will be saved in this list
 
@@ -204,8 +210,7 @@ public class TicketGateCommand implements CommandExecutor {
      * @param player the player who executed the command
      */
     private void regenMaster(Player player) {
-        config.set("master-key", generateID()); // generate a new key
-        main.saveConfig();
+        config.setMasterKey(generateID()); // generate a new key
         PlayerMessenger.sendMessage(player, "§5Master key regenerated!");
     }
 
@@ -216,12 +221,12 @@ public class TicketGateCommand implements CommandExecutor {
     }
 
     private List<String> getGates() {
-        return new ArrayList<>(Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false));
+        return new ArrayList<>(List.of(config.getGates()));
     }
 
     private List<String> getGateBlocks() {
         List<String> blocks = new ArrayList<>();
-        for (String gate : Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false)) {
+        for (String gate : config.getGates()) {
             blocks.add(config.getString("gates." + gate + ".block"));
         }
         return blocks;
@@ -254,8 +259,7 @@ public class TicketGateCommand implements CommandExecutor {
 
         // only change the block if the block is not already used for another gate
         if (!blocks.contains(block)) {
-            config.set("gates." + name + ".block", block);
-            main.saveConfig();
+            config.setProperty(name, "block", block);
             PlayerMessenger.sendMessage(player, "Block updated successfully!");
         } else {
             PlayerMessenger.sendError(player, "Block already used for another gate!");
@@ -263,14 +267,12 @@ public class TicketGateCommand implements CommandExecutor {
     }
 
     private void editName(Player player, String name, String newName) {
-        config.set("gates." + name + ".name", newName);
-        main.saveConfig();
+        config.setProperty(name, "name", newName);
         PlayerMessenger.sendMessage(player, "Name updated successfully!");
     }
 
     private void editLore(Player player, String name, String newLore) {
-        config.set("gates." + name + ".lore", newLore);
-        main.saveConfig();
+        config.setProperty(name, "lore", newLore);
         PlayerMessenger.sendMessage(player, "Lore updated successfully!");
     }
 
@@ -280,8 +282,7 @@ public class TicketGateCommand implements CommandExecutor {
             return;
         }
         if (getGates().contains(name)) {
-            config.set("gates." + name + ".one-time-use", consume);
-            main.saveConfig();
+            config.setProperty(name, "one-time-use", consume);
             PlayerMessenger.sendMessage(player, (consume ? "Ticket will now be consumed after usage!" : "Ticket will no longer be consumed!"));
         } else {
             PlayerMessenger.sendError(player, "Gate not found!");

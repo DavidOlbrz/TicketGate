@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,12 +12,12 @@ import java.util.*;
 /**
  * A class for tab completion of the /ticketgate command
  */
-public class TicketGateTabCompleter implements TabCompleter {
+class TicketGateTabCompleter implements TabCompleter {
 
-    FileConfiguration config;
+    private final ConfigManager config;
 
-    public TicketGateTabCompleter(FileConfiguration config) {
-        this.config = config;
+    TicketGateTabCompleter(ConfigManager configManager) {
+        config = configManager;
     }
 
     @Override
@@ -28,7 +27,7 @@ public class TicketGateTabCompleter implements TabCompleter {
                 return StringUtil.copyPartialMatches(args[0], Arrays.asList("add", "remove", "setGate", "ticket", "editBlock", "editName", "editLore", "setOneTimeUse"), new ArrayList<>());
             case 2:
                 if (args[0].equals("remove") || args[0].equals("setGate") || args[0].equals("ticket") || args[0].equals("editBlock") || args[0].equals("editName") || args[0].equals("editLore") || args[0].equals("setOneTimeUse")) {
-                    Set<String> gates = Objects.requireNonNull(config.getConfigurationSection("gates")).getKeys(false);
+                    Set<String> gates = config.getGatesSet();
                     return StringUtil.copyPartialMatches(args[1], gates, new ArrayList<>());
                 } else return new ArrayList<>();
             case 3:
@@ -44,6 +43,7 @@ public class TicketGateTabCompleter implements TabCompleter {
 
     /**
      * Gets a list of all materials
+     *
      * @return a list of all materials
      */
     private List<String> getMaterials() {
