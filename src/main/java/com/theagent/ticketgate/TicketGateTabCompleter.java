@@ -24,7 +24,7 @@ class TicketGateTabCompleter implements TabCompleter {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         switch (args.length) {
             case 1:
-                return StringUtil.copyPartialMatches(args[0], Arrays.asList("add", "remove", "setGate", "ticket", "editBlock", "editName", "editLore", "setOneTimeUse"), new ArrayList<>());
+                return StringUtil.copyPartialMatches(args[0], Arrays.asList("add", "remove", "setGate", "ticket", "editBlock", "editName", "editLore", "setOneTimeUse", "reload"), new ArrayList<>());
             case 2:
                 if (args[0].equals("remove") || args[0].equals("setGate") || args[0].equals("ticket") || args[0].equals("editBlock") || args[0].equals("editName") || args[0].equals("editLore") || args[0].equals("setOneTimeUse")) {
                     Set<String> gates = config.getGatesSet();

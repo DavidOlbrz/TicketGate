@@ -152,4 +152,12 @@ class ConfigManager {
         plugin.saveConfig();
     }
 
+    /**
+     * reloads the config file
+     */
+    void reloadConfig() {
+        plugin.reloadConfig();
+        config = plugin.getConfig();
+    }
+
 }

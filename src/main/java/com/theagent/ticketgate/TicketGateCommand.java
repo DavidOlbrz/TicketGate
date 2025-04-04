@@ -46,11 +46,16 @@ class TicketGateCommand implements CommandExecutor {
                         case "regenMaster":
                             regenMaster(player);
                             break;
+                        case "reload":
+                            config.reloadConfig();
+                            PlayerMessenger.sendMessage(player, "Configuration reloaded!");
+                            break;
                         default:
                             // error
                             PlayerMessenger.sendCommandError(player);
                             break;
                     }
+                    break;
                 case 2:
                     switch (args[0]) {
                         case "setGate":

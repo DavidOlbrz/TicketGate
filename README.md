@@ -44,6 +44,10 @@ Turns your fence gates into ticket gates
 
 `ticketgate setOneTimeUse <name> <true|false>`
 
+### Reload config
+
+`ticketgate reload`
+
 # Configuration
 
 ## Custom sounds
