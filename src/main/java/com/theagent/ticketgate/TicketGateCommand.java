@@ -33,6 +33,19 @@ class TicketGateCommand implements CommandExecutor {
     ) {
         // check if the sender is a player and has permission
         if (sender instanceof Player player && sender.hasPermission("ticketgate.use")) {
+            // special case since the lore can contain spaces
+            if (args.length > 3 && args[0].equals("editLore")) {
+                StringBuilder lore = new StringBuilder();
+                for (int i = 2; i < args.length; i++) {
+                    lore.append(args[i]);
+                    if (i != args.length - 1) {
+                        lore.append(" ");
+                    }
+                }
+                editLore(player, args[1], lore.toString());
+                return true;
+            }
+
             switch (args.length) {
                 case 0:
                     // TODO add message for help or information on the plugin
