@@ -1,9 +1,12 @@
 package com.theagent.ticketgate;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Gate;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,6 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,7 +68,7 @@ class GateEventListener implements Listener {
 
                 // allow opening the gate if it is a default gate
                 if (getGateType(clickedBlock).equals("default")) {
-                    playSound(p, successSound);
+                    playSound(clickedBlock, successSound);
                     return;
                 }
 
@@ -72,7 +76,7 @@ class GateEventListener implements Listener {
                 if (p.isSneaking() && config.getBoolean("allow-illegal-bypass")) {
                     // if the player is sneaking
                     illegalMessage(p, clickedBlock);
-                    playSound(p, illegalSound);
+                    playSound(clickedBlock, illegalSound);
                     /*
                      * Temporary solution: Just open the gate
                      * Correct way would be the player teleporting behind the gate.
@@ -82,7 +86,7 @@ class GateEventListener implements Listener {
 
                 // if the player has a correct ticket in their hand
                 if (item.getType().equals(Material.PAPER) && itemKey != null && checkTicket(p, item, clickedBlock)) {
-                    playSound(p, successSound);
+                    playSound(clickedBlock, successSound);
                     return;
                 }
 
@@ -90,7 +94,7 @@ class GateEventListener implements Listener {
                 e.setCancelled(true);
                 // notify the player
                 p.sendTitle("§4§lWrong ticket!", "§4You need a ticket to enter!", 10, 70, 20);
-                playSound(p, invalidSound);
+                playSound(clickedBlock, invalidSound);
             }
         }
     }
@@ -198,14 +202,19 @@ class GateEventListener implements Listener {
     /**
      * Play a sound as ticket gate feedback
      *
-     * @param player Player who triggered the event
-     * @param sound  Sound to play
+     * @param gate  Gate that was interacted with
+     * @param sound Sound to play
      */
-    private void playSound(Player player, String sound) {
-        if (!sound.isEmpty()) {
-            Objects.requireNonNull(
-                    Bukkit.getWorld(player.getWorld().getUID())
-            ).playSound(player.getLocation(), sound, 1.0f, 1.0f);
+    private void playSound(Block gate, String sound) {
+        Location gateLocation = gate.getLocation();
+
+        Collection<Entity> entities = Objects.requireNonNull(Bukkit.getWorld(gate.getWorld().getUID()))
+                .getNearbyEntities(gateLocation, 10, 10, 10);
+
+        for (Entity entity : entities) {
+            if (entity instanceof Player) {
+                ((Player) entity).playSound(gateLocation, sound, SoundCategory.BLOCKS, 0.625f, 1.0f, 0);
+            }
         }
     }
 
