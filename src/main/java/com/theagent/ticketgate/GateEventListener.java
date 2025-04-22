@@ -1,9 +1,6 @@
 package com.theagent.ticketgate;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Gate;
 import org.bukkit.entity.Entity;
@@ -191,7 +188,7 @@ class GateEventListener implements Listener {
     private void illegalMessage(Player player, Block block) {
         Bukkit.broadcastMessage(
                 String.format("§5* %s opened a ticket gate illegally at %d, %d, %d *",
-                        player.getDisplayName(),
+                        ChatColor.stripColor(player.getDisplayName()),
                         block.getX(),
                         block.getY(),
                         block.getZ()
