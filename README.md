@@ -12,6 +12,8 @@ Turns your fence gates into ticket gates
 
 ## Commands
 
+Command alias: `/tg`
+
 ### Add a new gate configuration
 
 `ticketgate add <name> <block>`

@@ -9,3 +9,4 @@ commands:
   ticketgate:
     description: Configure the plugin
     permission: ticketgate.use
+    aliases: "tg"
