@@ -63,8 +63,12 @@ class GateEventListener implements Listener {
                 // if gate is already open
                 if (gate.isOpen()) return;
 
+                String gateType = getGateType(clickedBlock);
+                // do nothing if it is not a configured gate
+                if (gateType == null) return;
+
                 // allow opening the gate if it is a default gate
-                if (getGateType(clickedBlock).equals("default")) {
+                if (gateType.equals("default")) {
                     playSound(clickedBlock, successSound);
                     return;
                 }
@@ -108,7 +112,7 @@ class GateEventListener implements Listener {
 
         String[] gates = config.getGates();
 
-        String gateType = "default";
+        String gateType = null;
 
         for (String gate : gates) {
             Material gateConfig = Material.getMaterial(config.getString("gates." + gate + ".gate"));
