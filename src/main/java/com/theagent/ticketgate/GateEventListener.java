@@ -57,7 +57,7 @@ class GateEventListener implements Listener {
             String itemKey = itemLore(item);
 
             // if correct gate type
-            if (clickedBlock.getType().equals(Material.ACACIA_FENCE_GATE)) {
+            if (Tag.FENCE_GATES.isTagged(clickedBlock.getType())) {
                 Gate gate = (Gate) clickedBlock.getBlockData();
 
                 // if gate is already open
@@ -103,19 +103,38 @@ class GateEventListener implements Listener {
      * @return block / gate name
      */
     private String getGateType(Block block) {
-        Material floor = block.getLocation().subtract(0, 1, 0).getBlock().getType(); // get block below gate
-        String[] gates = config.getGates(); // get all possible gate configurations
-        String gate = "default";
+        Material gateMaterial = block.getLocation().getBlock().getType();
+        Material floorMaterial = block.getLocation().subtract(0, 1, 0).getBlock().getType();
 
-        // search if the block fits a gate configuration
-        for (String gateConfig : gates) {
-            if (floor.equals(Material.getMaterial(Objects.requireNonNull(config.getString("gates." + gateConfig + ".block"))))) {
-                gate = gateConfig;
+        String[] gates = config.getGates();
+
+        String gateType = "default";
+
+        for (String gate : gates) {
+            Material gateConfig = Material.getMaterial(config.getString("gates." + gate + ".gate"));
+            Material floorConfig = Material.getMaterial(config.getString("gates." + gate + ".block"));
+            if (gateConfig == null || floorConfig == null) {
+                throw new RuntimeException("There seems to be an error in your config.yml!");
+            }
+            if (gateConfig.equals(gateMaterial) && floorConfig.equals(floorMaterial)) {
+                gateType = gate;
                 break;
             }
         }
 
-        return gate;
+//        Material floor = block.getLocation().subtract(0, 1, 0).getBlock().getType(); // get block below gate
+//        String[] gates = config.getGates(); // get all possible gate configurations
+//        String gate = "default";
+//
+//        // search if the block fits a gate configuration
+//        for (String gateConfig : gates) {
+//            if (floor.equals(Material.getMaterial(Objects.requireNonNull(config.getString("gates." + gateConfig + ".block"))))) {
+//                gate = gateConfig;
+//                break;
+//            }
+//        }
+
+        return gateType;
     }
 
     /**
