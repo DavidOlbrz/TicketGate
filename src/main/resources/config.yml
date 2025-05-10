@@ -24,3 +24,6 @@ gates:
     name: Subway Ticket
     lore: Ticket
     one-time-use: true
+
+# Plugin version - Do not change!
+version: '0.0.5'

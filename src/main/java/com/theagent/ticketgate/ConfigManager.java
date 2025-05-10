@@ -2,6 +2,8 @@ package com.theagent.ticketgate;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
 
@@ -17,11 +19,75 @@ class ConfigManager {
         this.plugin = plugin;
 
         initialize();
+
+        updateConfig();
     }
 
     void initialize() {
         plugin.saveDefaultConfig();
         config = plugin.getConfig();
+    }
+
+    /**
+     * Checks if the config file is outdated and creates a backup if so
+     */
+    void updateConfig() {
+        // get versions of plugin and config
+        String[][] versions = new String[2][3];
+        versions[0] = plugin.getDescription().getVersion().split("\\.");
+        versions[1] = Objects.requireNonNull(config.getString("version")).split("\\.");
+
+        // TODO remove
+        plugin.getLogger().info("Plugin version: " + versions[0][0] + "." + versions[0][1] + "." + versions[0][2]);
+        plugin.getLogger().info("Config version: " + versions[1][0] + "." + versions[1][1] + "." + versions[1][2]);
+
+        // check if the config version is outdated
+        if (versions[1].length != 3 || isOlderVersion(versions)) {
+            plugin.getLogger().warning("Outdated config! Creating backup of old config file...");
+            backupConfig();
+        }
+    }
+
+    /**
+     * Checks if the config version is older than the plugin version
+     *
+     * @param versions config version and plugin version
+     * @return true if the config is outdated
+     */
+    boolean isOlderVersion(String[][] versions) {
+        for (int i = 0; i < 3; i++) {
+            if (Integer.parseInt(versions[0][i]) > Integer.parseInt(versions[1][i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * creates a backup of the old config file
+     */
+    void backupConfig() {
+        // path to the plugin folder
+        Path pluginFolder = plugin.getDataFolder().toPath();
+        // current config file
+        File configFile = pluginFolder.resolve("config.yml").toFile();
+        // renaming the config file
+        boolean success = configFile.renameTo(new File(pluginFolder.resolve(
+                "config-backup-"
+                        + config.getString("version", "noVersionDefined")
+                        + ".yml"
+        ).toString()));
+        // send error if renaming wasn't successful
+        if (!success) {
+            plugin.getLogger().severe("Could not backup config file!");
+            return;
+        }
+
+        // re-initializes the config file
+        initialize();
+
+        plugin.getLogger().info("Finished creating backup of old config file.");
     }
 
     /**
