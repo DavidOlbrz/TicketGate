@@ -4,6 +4,14 @@
 
 Turns your fence gates into ticket gates
 
+## Demonstration
+
+![Ticket Gate Success](https://github.com/DavidOlbrz/TicketGate/blob/master/ticket_gate_success.gif)
+
+![Ticket Gate Error](https://github.com/DavidOlbrz/TicketGate/blob/master/ticket_gate_error.gif)
+
+*(Ticket Gate Model not included)*
+
 ## Prerequisites
 
 - Java 17
