@@ -48,11 +48,11 @@ class GateEventListener implements Listener {
         Player p = e.getPlayer(); // save the player
 
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            // if it is a right click on a block:
+            // if it is a right-click on a block:
             Block clickedBlock = e.getClickedBlock();
             // if no block was clicked
             if (clickedBlock == null) return;
-            // get item in player's hand
+            // get item in the player's hand
             ItemStack item = p.getInventory().getItemInMainHand();
             String itemKey = itemLore(item);
 
@@ -60,7 +60,7 @@ class GateEventListener implements Listener {
             if (Tag.FENCE_GATES.isTagged(clickedBlock.getType())) {
                 Gate gate = (Gate) clickedBlock.getBlockData();
 
-                // if gate is already open
+                // if the gate is already open
                 if (gate.isOpen()) return;
 
                 String gateType = getGateType(clickedBlock);
@@ -91,7 +91,7 @@ class GateEventListener implements Listener {
                     return;
                 }
 
-                // if nothing from above applies, cancel the event
+                // if nothing from the above applies, cancel the event
                 e.setCancelled(true);
                 // notify the player
                 p.sendTitle("§4§lWrong ticket!", "§4You need a ticket to enter!", 10, 70, 20);
@@ -125,18 +125,6 @@ class GateEventListener implements Listener {
                 break;
             }
         }
-
-//        Material floor = block.getLocation().subtract(0, 1, 0).getBlock().getType(); // get block below gate
-//        String[] gates = config.getGates(); // get all possible gate configurations
-//        String gate = "default";
-//
-//        // search if the block fits a gate configuration
-//        for (String gateConfig : gates) {
-//            if (floor.equals(Material.getMaterial(Objects.requireNonNull(config.getString("gates." + gateConfig + ".block"))))) {
-//                gate = gateConfig;
-//                break;
-//            }
-//        }
 
         return gateType;
     }
