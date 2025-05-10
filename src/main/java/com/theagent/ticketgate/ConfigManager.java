@@ -37,10 +37,6 @@ class ConfigManager {
         versions[0] = plugin.getDescription().getVersion().split("\\.");
         versions[1] = Objects.requireNonNull(config.getString("version")).split("\\.");
 
-        // TODO remove
-        plugin.getLogger().info("Plugin version: " + versions[0][0] + "." + versions[0][1] + "." + versions[0][2]);
-        plugin.getLogger().info("Config version: " + versions[1][0] + "." + versions[1][1] + "." + versions[1][2]);
-
         // check if the config version is outdated
         if (versions[1].length != 3 || isOlderVersion(versions)) {
             plugin.getLogger().warning("Outdated config! Creating backup of old config file...");
